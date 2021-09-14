@@ -1,10 +1,5 @@
 /**
  * Map entry class used for implementing the ExternalChainingHashMap.
- *
- * DO NOT MODIFY THIS FILE!!
- *
- * @author CS 1332 TAs
- * @version 1.0
  */
 public class ExternalChainingMapEntry<K, V> {
 
@@ -14,9 +9,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Constructs a new ExternalChainingMapEntry with only the given key and value.
-     *
-     * @param key   The key in the new entry.
-     * @param value The value in the new entry.
      */
     public ExternalChainingMapEntry(K key, V value) {
         this(key, value, null);
@@ -24,10 +16,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Constructs a new ExternalChainingMapEntry with the given key, value, and next reference.
-     *
-     * @param key   The key in the new entry.
-     * @param value The value in the new entry.
-     * @param next  The next entry in the external chain.
      */
     public ExternalChainingMapEntry(K key, V value, ExternalChainingMapEntry<K, V> next) {
         this.key = key;
@@ -37,8 +25,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Gets the key.
-     *
-     * @return The key.
      */
     public K getKey() {
         return key;
@@ -46,8 +32,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Gets the value.
-     *
-     * @return The value.
      */
     public V getValue() {
         return value;
@@ -55,8 +39,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Gets the next entry.
-     *
-     * @return The next entry.
      */
     public ExternalChainingMapEntry<K, V> getNext() {
         return next;
@@ -64,17 +46,13 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Sets the key.
-     *
-     * @param key The new key.
-     */
+    */
     public void setKey(K key) {
         this.key = key;
     }
 
     /**
      * Sets the value.
-     *
-     * @param value The new value.
      */
     public void setValue(V value) {
         this.value = value;
@@ -82,8 +60,6 @@ public class ExternalChainingMapEntry<K, V> {
 
     /**
      * Sets the next entry.
-     *
-     * @param next The new next entry.
      */
     public void setNext(ExternalChainingMapEntry<K, V> next) {
         this.next = next;

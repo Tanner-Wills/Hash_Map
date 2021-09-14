@@ -5,32 +5,15 @@ import java.util.NoSuchElementException;
  */
 public class ExternalChainingHashMap<K, V> {
 
-    /*
-     * The initial capacity of the ExternalChainingHashMap when created with the
-     * default constructor.
-     *
-     * DO NOT MODIFY THIS VARIABLE!
-     */
+    // Instance Variables
     public static final int INITIAL_CAPACITY = 13;
-
-    /*
-     * The max load factor of the ExternalChainingHashMap.
-     *
-     * DO NOT MODIFY THIS VARIABLE!
-     */
     public static final double MAX_LOAD_FACTOR = 0.67;
 
-    /*
-     * Do not add new instance variables or modify existing ones.
-     */
     private ExternalChainingMapEntry<K, V>[] table;
     private int size;
 
-    /**
-     * Constructs a new ExternalChainingHashMap with an initial capacity of INITIAL_CAPACITY.
-     */
+    // Constructor
     public ExternalChainingHashMap() {
-        //DO NOT MODIFY THIS METHOD!
         table = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[INITIAL_CAPACITY];
     }
 
@@ -70,7 +53,30 @@ public class ExternalChainingHashMap<K, V> {
      * @throws java.lang.IllegalArgumentException If key or value is null.
      */
     public V put(K key, V value) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        // Invalid argument
+        if (key == null || value == null)
+            throw new IllegalArgumentException();
+        // Get hashCode
+        int hashCode = Math.abs(key.hashCode() % table.length);
+        // Check if key in table and add if necessary
+        V searchVal = searchIndex(key,value, table[hashCode]);
+        // Found Case - Return replaced value
+        if (searchVal != null) {
+            return searchVal;
+        }
+        // Add new entry at index
+        else {
+            // Resize if necessary
+            if ((size + 1.0) / table.length > MAX_LOAD_FACTOR){
+                resizeBackingTable(2*table.length+1);
+                put(key,value);
+            }
+            else {
+                table[hashCode] = new ExternalChainingMapEntry<K,V>(key,value,table[hashCode]);
+                size++;
+            }
+            return null;
+        }
     }
 
     /**
@@ -103,7 +109,9 @@ public class ExternalChainingHashMap<K, V> {
      * @param Length The new length of the backing table.
      */
     private void resizeBackingTable(int length) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        ExternalChainingMapEntry<K, V>[] resizeTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[2*length + 1];
+        // go through and re-hash, removing all deletes.
+
     }
 
     /**
@@ -131,4 +139,24 @@ public class ExternalChainingHashMap<K, V> {
         // DO NOT MODIFY THIS METHOD!
         return size;
     }
+
+    // Helper Methods
+    private V searchIndex(K key,V value, ExternalChainingMapEntry<K,V> indexPos){
+        // Not Found Case
+        if (indexPos == null)
+            return null;
+            // Found Case
+        else if (indexPos.getKey().equals(key)){
+            // Save old value and overwrite
+            V returnVal = indexPos.getValue();
+            indexPos.setValue(value);
+            return returnVal;
+        }
+        // Continue Recursion
+        else {
+            return searchIndex(key,value, indexPos.getNext());
+        }
+    }
+
+
 }
