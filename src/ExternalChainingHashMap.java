@@ -56,14 +56,17 @@ public class ExternalChainingHashMap<K, V> {
         // Invalid argument
         if (key == null || value == null)
             throw new IllegalArgumentException();
+
         // Get hashCode
         int hashCode = Math.abs(key.hashCode() % table.length);
+
         // Check if key in table and add if necessary
         V searchVal = searchIndex(key,value, table[hashCode]);
+
         // Found Case - Return replaced value
-        if (searchVal != null) {
+        if (searchVal != null)
             return searchVal;
-        }
+
         // Add new entry at index
         else {
             // Resize if necessary
@@ -89,6 +92,17 @@ public class ExternalChainingHashMap<K, V> {
      */
     public V remove(K key) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        if(key == null)
+            throw new IllegalArgumentException("Can't remove a null key from the map!");
+        // Get hashCode
+        int hashCode = Math.abs(key.hashCode() % table.length);
+        if(table[hashCode] == null)
+            throw new NoSuchElementException("Key is not in the map!");
+        else {
+            V keyData = table[hashCode].getValue();
+            table[hashCode] = null;
+            return keyData;
+        }
     }
 
     /**
@@ -109,8 +123,17 @@ public class ExternalChainingHashMap<K, V> {
      * @param Length The new length of the backing table.
      */
     private void resizeBackingTable(int length) {
-        ExternalChainingMapEntry<K, V>[] resizeTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[2*length + 1];
-        // go through and re-hash, removing all deletes.
+        ExternalChainingMapEntry<K, V>[] resizeTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[length];
+        // go through and re-hash
+        for(int i = 0; i<length; i++){
+            if(table[i] != null) {
+                ExternalChainingMapEntry oldNode = table[i];
+                K key = table[i].getKey();
+                int hashCode = Math.abs(key.hashCode() % resizeTable.length);
+                resizeTable[hashCode] = oldNode;
+
+            }
+        }
 
     }
 
