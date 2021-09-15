@@ -5,15 +5,32 @@ import java.util.NoSuchElementException;
  */
 public class ExternalChainingHashMap<K, V> {
 
-    // Instance Variables
+    /*
+     * The initial capacity of the ExternalChainingHashMap when created with the
+     * default constructor.
+     *
+     * DO NOT MODIFY THIS VARIABLE!
+     */
     public static final int INITIAL_CAPACITY = 13;
+
+    /*
+     * The max load factor of the ExternalChainingHashMap.
+     *
+     * DO NOT MODIFY THIS VARIABLE!
+     */
     public static final double MAX_LOAD_FACTOR = 0.67;
 
+    /*
+     * Do not add new instance variables or modify existing ones.
+     */
     private ExternalChainingMapEntry<K, V>[] table;
     private int size;
 
-    // Constructor
+    /**
+     * Constructs a new ExternalChainingHashMap with an initial capacity of INITIAL_CAPACITY.
+     */
     public ExternalChainingHashMap() {
+        //DO NOT MODIFY THIS METHOD!
         table = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[INITIAL_CAPACITY];
     }
 
@@ -21,15 +38,15 @@ public class ExternalChainingHashMap<K, V> {
      * Adds the given key-value pair to the map. If an entry in the map
      * already has this key, replace the entry's value with the new one
      * passed in.
-     *
+     * <p>
      * In the case of a collision, use external chaining as your resolution
      * strategy. Add new entries to the front of an existing chain, but don't
      * forget to check the entire chain for duplicate keys first.
-     *
+     * <p>
      * If you find a duplicate key, then replace the entry's value with the new
      * one passed in. When replacing the old value, replace it at that position
      * in the chain, not by creating a new entry and adding it to the front.
-     *
+     * <p>
      * Before actually adding any data to the HashMap, you should check to
      * see if the table would violate the max load factor if the data was
      * added. Resize if the load factor (LF) is greater than max LF (it is
@@ -42,40 +59,37 @@ public class ExternalChainingHashMap<K, V> {
      * the data or figure out if it's a duplicate. Be careful to consider the
      * differences between integer and double division when calculating load
      * factor.
-     *
+     * <p>
      * When regrowing, resize the length of the backing table to
      * (2 * old length) + 1. You should use the resizeBackingTable method to do so.
      *
      * @param key   The key to add.
      * @param value The value to add.
      * @return null if the key was not already in the map. If it was in the
-     *         map, return the old value associated with it.
+     * map, return the old value associated with it.
      * @throws java.lang.IllegalArgumentException If key or value is null.
      */
     public V put(K key, V value) {
+        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
         // Invalid argument
         if (key == null || value == null)
             throw new IllegalArgumentException();
-
         // Get hashCode
         int hashCode = Math.abs(key.hashCode() % table.length);
-
         // Check if key in table and add if necessary
-        V searchVal = searchIndex(key,value, table[hashCode]);
-
+        V searchVal = searchIndex(key, value, table[hashCode]);
         // Found Case - Return replaced value
-        if (searchVal != null)
+        if (searchVal != null) {
             return searchVal;
-
+        }
         // Add new entry at index
         else {
             // Resize if necessary
-            if ((size + 1.0) / table.length > MAX_LOAD_FACTOR){
-                resizeBackingTable(2*table.length+1);
-                put(key,value);
-            }
-            else {
-                table[hashCode] = new ExternalChainingMapEntry<K,V>(key,value,table[hashCode]);
+            if ((size + 1.0) / table.length > MAX_LOAD_FACTOR) {
+                resizeBackingTable(2 * table.length + 1);
+                put(key, value);
+            } else {
+                table[hashCode] = new ExternalChainingMapEntry<K, V>(key, value, table[hashCode]);
                 size++;
             }
             return null;
@@ -92,54 +106,72 @@ public class ExternalChainingHashMap<K, V> {
      */
     public V remove(K key) {
         // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
-        if(key == null)
-            throw new IllegalArgumentException("Can't remove a null key from the map!");
-        // Get hashCode
+        if (key == null)
+            throw new IllegalArgumentException();
+        //Get HashCode
         int hashCode = Math.abs(key.hashCode() % table.length);
-        if(table[hashCode] == null)
-            throw new NoSuchElementException("Key is not in the map!");
-        else {
-            V keyData = table[hashCode].getValue();
-            table[hashCode] = null;
-            return keyData;
+        // Search for key
+        ExternalChainingMapEntry<K, V> curVal = table[hashCode];
+        ExternalChainingMapEntry<K, V> prevVal = null;
+        while (curVal != null) {
+            // If match
+            if (curVal.getKey().equals(key)) {
+                // If only value
+                if (prevVal == null) {
+                    table[hashCode] = curVal.getNext();
+                }
+                // If other than first value
+                else {
+                    prevVal.setNext(curVal.getNext());
+                }
+                size--;
+                return curVal.getValue();
+            }
+            // If not at current index
+            else {
+                prevVal = curVal;
+                curVal = curVal.getNext();
+            }
         }
+        throw new NoSuchElementException();
     }
 
     /**
      * Helper method stub for resizing the backing table to length.
-     *
+     * <p>
      * This method should be called in put() if the backing table needs to
      * be resized.
-     *
+     * <p>
      * You should iterate over the old table in order of increasing index and
      * add entries to the new table in the order in which they are traversed.
-     *
+     * <p>
      * Since resizing the backing table is working with the non-duplicate
      * data already in the table, you won't need to explicitly check for
      * duplicates.
-     *
+     * <p>
      * Hint: You cannot just simply copy the entries over to the new table.
      *
      * @param Length The new length of the backing table.
      */
     private void resizeBackingTable(int length) {
-        ExternalChainingMapEntry<K, V>[] resizeTable = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[length];
-        // go through and re-hash
-        for(int i = 0; i<length; i++){
-            if(table[i] != null) {
-                ExternalChainingMapEntry oldNode = table[i];
-                K key = table[i].getKey();
-                int hashCode = Math.abs(key.hashCode() % resizeTable.length);
-                resizeTable[hashCode] = oldNode;
-
+        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
+        // Create new table
+        ExternalChainingMapEntry<K, V>[] temp = table;
+        table = (ExternalChainingMapEntry<K, V>[]) new ExternalChainingMapEntry[length];
+        size = 0;
+        // Add all values
+        for (int i = 0; i < temp.length; i++) {
+            ExternalChainingMapEntry<K, V> curVal = temp[i];
+            while (curVal != null) {
+                put(curVal.getKey(), curVal.getValue());
+                curVal = curVal.getNext();
             }
         }
-
     }
 
     /**
      * Returns the table of the map.
-     *
+     * <p>
      * For grading purposes only. You shouldn't need to use this method since
      * you have direct access to the variable.
      *
@@ -152,7 +184,7 @@ public class ExternalChainingHashMap<K, V> {
 
     /**
      * Returns the size of the map.
-     *
+     * <p>
      * For grading purposes only. You shouldn't need to use this method since
      * you have direct access to the variable.
      *
@@ -164,12 +196,12 @@ public class ExternalChainingHashMap<K, V> {
     }
 
     // Helper Methods
-    private V searchIndex(K key,V value, ExternalChainingMapEntry<K,V> indexPos){
+    private V searchIndex(K key, V value, ExternalChainingMapEntry<K, V> indexPos) {
         // Not Found Case
         if (indexPos == null)
             return null;
             // Found Case
-        else if (indexPos.getKey().equals(key)){
+        else if (indexPos.getKey().equals(key)) {
             // Save old value and overwrite
             V returnVal = indexPos.getValue();
             indexPos.setValue(value);
@@ -177,9 +209,7 @@ public class ExternalChainingHashMap<K, V> {
         }
         // Continue Recursion
         else {
-            return searchIndex(key,value, indexPos.getNext());
+            return searchIndex(key, value, indexPos.getNext());
         }
     }
-
-
 }
