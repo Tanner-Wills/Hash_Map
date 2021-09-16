@@ -1,28 +1,14 @@
 import java.util.NoSuchElementException;
 
 /**
- * Your implementation of a ExternalChainingHashMap.
+ * Implementation of a ExternalChainingHashMap.
+ * Dictionary where each entry is the start of a linked list
  */
 public class ExternalChainingHashMap<K, V> {
 
-    /*
-     * The initial capacity of the ExternalChainingHashMap when created with the
-     * default constructor.
-     *
-     * DO NOT MODIFY THIS VARIABLE!
-     */
     public static final int INITIAL_CAPACITY = 13;
-
-    /*
-     * The max load factor of the ExternalChainingHashMap.
-     *
-     * DO NOT MODIFY THIS VARIABLE!
-     */
     public static final double MAX_LOAD_FACTOR = 0.67;
 
-    /*
-     * Do not add new instance variables or modify existing ones.
-     */
     private ExternalChainingMapEntry<K, V>[] table;
     private int size;
 
@@ -70,18 +56,21 @@ public class ExternalChainingHashMap<K, V> {
      * @throws java.lang.IllegalArgumentException If key or value is null.
      */
     public V put(K key, V value) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
         // Invalid argument
         if (key == null || value == null)
             throw new IllegalArgumentException();
+
         // Get hashCode
         int hashCode = Math.abs(key.hashCode() % table.length);
+
         // Check if key in table and add if necessary
         V searchVal = searchIndex(key, value, table[hashCode]);
+
         // Found Case - Return replaced value
         if (searchVal != null) {
             return searchVal;
         }
+
         // Add new entry at index
         else {
             // Resize if necessary
@@ -98,14 +87,10 @@ public class ExternalChainingHashMap<K, V> {
 
     /**
      * Removes the entry with a matching key from the map.
-     *
      * @param key The key to remove.
      * @return The value associated with the key.
-     * @throws java.lang.IllegalArgumentException If key is null.
-     * @throws java.util.NoSuchElementException   If the key is not in the map.
      */
     public V remove(K key) {
-        // WRITE YOUR CODE HERE (DO NOT MODIFY METHOD HEADER)!
         if (key == null)
             throw new IllegalArgumentException();
         //Get HashCode
@@ -200,6 +185,7 @@ public class ExternalChainingHashMap<K, V> {
         // Not Found Case
         if (indexPos == null)
             return null;
+
             // Found Case
         else if (indexPos.getKey().equals(key)) {
             // Save old value and overwrite
